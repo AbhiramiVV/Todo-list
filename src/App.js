@@ -7,9 +7,8 @@ import "./App.css";
 function Todo() {
   const [todo, setTodo] = useState("");
   const [todos, setTodos] = useState([]);
- const [editId,setEditID] = useState(0)
+  const [editId,setEditID] = useState(0)
 
-  const inputRef = useRef("null");
   const handleSubmit = (e) => {
     e.preventDefault();
   };
@@ -17,6 +16,10 @@ function Todo() {
   const addTodo = () => {
     if(todo.trim() !== ''){
       setTodos([...todos, {list : todo,id : Date.now(),status :false}]);
+      localStorage.setItem(
+        "todo",
+        JSON.stringify([...todos, { list: todo,id : Date.now(),status: false }])
+      );
       setTodo("");
     }
     if(editId){
@@ -30,9 +33,16 @@ function Todo() {
     }
     
   };
+
+  const inputRef = useRef("null");
   useEffect(() => {
     inputRef.current.focus();
-  });
+    if (localStorage.getItem("todo")) {
+      //key from handlesum
+      setTodos(JSON.parse(localStorage.getItem("todo")));
+    }
+    // todoInputRef.current.style.color="red"
+  }, []);
 
   const onDelete = (id) =>{
    setTodos( todos.filter((to) => to.id !== id))
